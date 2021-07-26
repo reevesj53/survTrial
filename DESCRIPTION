@@ -1,16 +1,22 @@
 Package: survTrial
-Title: What the Package Does (One Line, Title Case)
+Title: PFS trial simulation
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "John",
+           family = "Reeves",
            role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+           email = "john.reeves.ext@bayer.com")
+Description: Simulated PFS times for Sip-T project.  Progression and death events are genereated
+    for 2 treatment groups.  Options include moving progression events forward to next
+    scheduled visit, and censored times back to most recent visit.  Data cut-off is specified
+    for the nth event.
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
+Imports: 
+    dplyr,
+    magrittr,
+    purrr,
+    tibble
