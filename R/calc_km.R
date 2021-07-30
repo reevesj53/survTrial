@@ -6,7 +6,8 @@
 calc_km <- function(sim){
 
 t.last <- survival::survfit(Surv(pfst, status)~1, data = sim$sim)$time %>% max()
-t.out <- seq(0, t.last, length.out = 100)
+#t.out <- seq(0, t.last, length.out = 100)
+t.out <- seq(0,132,12)
 
 approx_km <- function(x){
   surv <- stats::approx(c(0,x$time), c(1,x$surv), xout=t.out, method="constant", rule=2)$y
@@ -71,4 +72,22 @@ approx_km <- function(x){
   out$sim.km.quantile <- sim.km.quantile
   out$median.quantile <- sim.median.quantile
   structure(out, class = c("trialsim.km"))
+}
+
+
+plot_km <- function(sim.km,ci = FALSE){
+
+  # Plot
+  ## Generate ggplot object with aes specified using simulated data
+    kmplot <- sim.km$sim.km.quantile
+    ci <- TRUE
+    g <-
+      ggplot2::ggplot(kmplot,
+                      ggplot2::aes(x=time, y=int_med, color=factor(rx))) +
+                      ggplot2::geom_step(size = 1)
+    if (ci) g <- g +
+      ggplot2::geom_ribbon(ggplot2::aes(ymin = int_low, ymax = int_high, fill=factor(rx)),
+                           alpha = 0.4)
+    g
+    return(g)
 }
