@@ -35,7 +35,7 @@ calc_hr <- function(sim){
   structure(out, class = c("trialsim.hr"))
 }
 
-plot_hr <- function(sim,ci = FALSE){
+plothr <- function(sim,ci = FALSE){
 
   # Plot
   ## Generate ggplot object with aes specified using simulated data

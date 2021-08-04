@@ -4,30 +4,82 @@
 \alias{trial_sim}
 \title{Simulation of trial data for Sip-T project}
 \usage{
-trial_sim(schedule, enrol, rxrate, censor.prop = 0.1, n.rep = 1000)
+trial_sim(
+  schedule,
+  enrol,
+  rxrate,
+  nevent,
+  adjust = TRUE,
+  trt = c("treatment", "placebo"),
+  death.prop = 0.1,
+  censor.prop = 0.1,
+  n.rep = 1000
+)
 }
 \arguments{
-\item{schedule}{A required vector describing the visit schedule in weeks.}
+\item{schedule}{A required vector describing the visit schedule in weeks.  Simulated progression times occurring
+after the last scheduled visit are censored.}
 
 \item{enrol}{A required vector that displays the number of subjects projected to be enrolled each
 month.  It incorporates information on the ramp-up period (see example below).}
 
-\item{rxrate}{A required vector providing the median PFS for each of two groups
-(reference / treatment).}
+\item{rxrate}{A required vector providing the median PFS for each of two groups in months
+(treatment / placebo).}
 
-\item{censor.prop}{Proportion of subjects censored in simulation (e.g. 0.1 for 10\%)}
+\item{nevent}{A required integer providing the event number that defines the data cut-off.}
 
-\item{n.rep}{An integer defining number of simulations}
+\item{adjust}{A logical to specify whether progression events are moved forward to next
+scheduled visit, and censored events remain at last available visit (defaults to TRUE).}
+
+\item{trt}{An optional character vector specifying names of 2 treatment arms (order corresponds to \code{rxrate}).}
+
+\item{death.prop}{Specifies proportion of simulated PFS events that are deaths (i.e. simulated
+times of death are not adjusted to \code{schedule} and \code{adjust} parameter has no effect).}
+
+\item{censor.prop}{Proportion of subjects censored in simulation.}
+
+\item{n.rep}{An integer defining number of simulations.}
 }
 \value{
-A \code{survparamsim} object that contains a data frame (tibble) for the simulated survival profiles with the
+A \code{trialsim} object that contains a data frame (tibble) for the simulated survival profiles with the
 following columns:
 \itemize{\item \strong{rep}: ID for simulation runs
+\item \strong{rx}: Treatment group
 \item \strong{subjid}: ID for subjects in simulations
-\item \strong{pfst}: PFS time
-\item \strong{status}: event status, 0=censored, 1=event
+\item \strong{pfst}: Simulated PFS time (weeks)
+\item \strong{status}: Event status, 0=censored, 1=event
+\item \strong{death}: Death status, 0=alive, 1=dead
+\item \strong{eventt}: Simulated event time in weeks (equal to \strong{pfst} if \code{adjust=FALSE})
+\item \strong{enrol}: Enrollment time (weeks)
+\item \strong{totalt}: Total time: enrollment time plus event time (weeks)
+}
+And a data frame containing the time in months of the data-cut for each simulation based on the \code{nevent} parameter:
+\itemize{\item \strong{rep}: ID for simulation runs.
+\item \strong{cut}: Time (weeks) of data cut-off.  If target number of events is not reached, then cut-off
+is set at last censored time.
 }
 }
 \description{
-Simulation of trial data for Sip-T project
+The main function to generate two-arm clinical trial PFS data assuming an exponential distribution.
+}
+\details{
+\code{\link[=trial_sim]{trial_sim()}} returns simulated PFS data from a hypothetical clinical trial using the ramp-up enrollment provided
+in \code{schedule}. Censoring proportion and proportion of PFS events that result in death can be specified.  The option to
+move progression events forward to the next scheduled visit (and censored events back to previous visit) is also
+provided.
+}
+\examples{
+# Generate enrollment schedule, with ramp-up period of 5 months, 10 subjects per month thereafter, up to a total
+# of 60 subjects with 1:1 randomization
+enrol <- c(seq(2,10,length.out=5),rep(10,times=3))
+# Input visit schedule for tumor assessments in weeks
+schedule <- seq(0,100,4)
+# Set Median PFS to 10 months for Placebo, and 12 months for Sip-T
+rxrate <- c(12,10)
+# Data cut-off is set at event number 40, proportion of events that are deaths is set at 10\% and
+# censoring rate is 10\%.  Accept default method of moving progression events forward to next scheduled visit.
+# Number of trial simulations = 1000.
+nevent <- 40
+sim <- trial_sim(schedule, enrol, rxrate, nevent, adjust=TRUE, trt=c("Sip-T","Placebo"),death.prop=0.1,
+censor.prop=0.1,n.rep=1000)
 }

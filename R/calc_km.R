@@ -23,71 +23,63 @@ approx_km <- function(x){
     # Fit each nested data to KM
     dplyr::mutate(kmfit =
                     purrr::map(data, function(x) survival::survfit(Surv(pfst, status)~1, data=x))) %>%
-    dplyr::mutate(median = purrr::map_dbl(kmfit, function(x) broom::glance(x)$median),
-                  n = purrr::map_dbl(kmfit, function(x) broom::glance(x)$nobs),
-                  km = purrr::map(kmfit, approx_km)) %>%
-    dplyr::arrange(rep,rx)
+    dplyr::mutate(median = purrr::map_dbl(kmfit, function(x) broom::glance(x)$median)) %>%
+    dplyr::arrange(rep,rx) %>% select(-data,-kmfit)
 
   ci.range <- 0.95
 
-  sim.km.quantile <-
-    sim.km %>%
-    dplyr::select(-data, -kmfit) %>%
-    tidyr::unnest(km) %>%
-    dplyr::group_by(rx, time) %>%
-    tidyr::nest() %>%
-    dplyr::mutate(quantiles = purrr::map(data, function(x)
-      dplyr::summarize(x,
-                       int_low = stats::quantile(surv, probs = 0.5 - ci.range/2),
-                       int_med = stats::quantile(surv, probs = 0.5),
-                       int_high= stats::quantile(surv, probs = 0.5 + ci.range/2)))) %>%
-    tidyr::unnest(quantiles) %>%
-    dplyr::ungroup() %>%
-    dplyr::select(-data)
 
   ## Calc quantiles for median survival time
-  sim.median.time <-
-    sim.km %>%
-    dplyr::select(rep, rx, median, n) %>%
-    dplyr::ungroup()
+
 
   quantiles <-
     tibble::tibble(description = c("int_low", "int_med", "int_high"),
                    quantile = c(0.5 - ci.range/2, 0.5, 0.5 + ci.range/2))
 
   sim.median.quantile <-
-    sim.median.time %>%
+    sim.km %>% ungroup() %>%
     dplyr::group_by(rx) %>%
     dplyr::summarize(int_low = as.numeric(stats::quantile(median, probs = 0.5 - ci.range/2, na.rm = TRUE)),
                    int_med = as.numeric(stats::quantile(median, probs = 0.5, na.rm = TRUE)),
-                   int_high= as.numeric(stats::quantile(median, probs = 0.5 + ci.range/2, na.rm = TRUE)),
-                   n_min = min(n),
-                   n_max = max(n)) %>%
+                   int_high= as.numeric(stats::quantile(median, probs = 0.5 + ci.range/2, na.rm = TRUE))) %>%
     dplyr::ungroup() %>%
     tidyr::pivot_longer(int_low:int_high, names_to = "description", values_to = "median") %>%
     dplyr::inner_join(quantiles,by="description")
 
   # Output
   out <- list()
-  out$sim.km.quantile <- sim.km.quantile
+  out$sim.km <- sim.km
   out$median.quantile <- sim.median.quantile
   structure(out, class = c("trialsim.km"))
 }
-
-
-plot_km <- function(sim.km,ci = FALSE){
+#' @export
+plot_sim <- function(sim) UseMethod("plot_sim")
+#' @export
+plot_sim.trialsim.km <- function(sim, ci = FALSE){
 
   # Plot
   ## Generate ggplot object with aes specified using simulated data
-    kmplot <- sim.km$sim.km.quantile
-    ci <- TRUE
-    g <-
-      ggplot2::ggplot(kmplot,
-                      ggplot2::aes(x=time, y=int_med, color=factor(rx))) +
-                      ggplot2::geom_step(size = 1)
-    if (ci) g <- g +
-      ggplot2::geom_ribbon(ggplot2::aes(ymin = int_low, ymax = int_high, fill=factor(rx)),
-                           alpha = 0.4)
-    g
-    return(g)
+  #sim <- sim.km
+  kmplot <- sim$sim.km
+  kmquantile <- sim$median.quantile
+  km1 <- kmquantile %>% filter(rx==0) %>% select(-rx)
+  km2 <- kmquantile %>% filter(rx==1) %>% select(-rx)
+
+  g <-
+    ggplot2::ggplot(kmplot, ggplot2::aes(median)) +
+    ggplot2::geom_histogram(bins = 30, alpha = 0.5, color = "black") +
+    ggplot2::geom_vline(data = dplyr::filter(kmquantile, description %in% c("int_low", "int_high")),
+                        aes(xintercept = median), lty="dashed", color="red", lwd=1) +
+    ggplot2::facet_wrap(~rx)
+  tt <- ttheme_default(colhead=list(fg_params = list(parse=TRUE)),
+                       base_size = 10,
+                       padding = unit(c(2, 4), "mm"))
+  tbl1 <- tableGrob(km1, rows=NULL, theme=tt)
+  tbl2 <- tableGrob(km2, rows=NULL, theme=tt)
+  hlay <- rbind(c(1,1),
+                c(2,3))
+  g <- grid.arrange(g, tbl1, tbl2, layout_matrix=hlay,
+               heights = c(2, 1))
+  return(g)
 }
+
