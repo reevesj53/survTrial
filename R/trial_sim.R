@@ -64,16 +64,6 @@ trial_sim <- function(schedule, enrol, rxrate, nevent, adjust=TRUE, trt=c("treat
   }
   if(missing(nevent)) stop("`nevent` needs to be provided")
 
-  enrol <- c(seq(2,10,length.out=5),rep(10,times=3))
-  schedule <- seq(0,100,4)
-  rxrate <- c(12,10)
-  n.rep <- 6
-  censor.prop <- 0.1
-  nevent <- 40
-  trt=c("treatment","placebo")
-  death.prop <- 0.1
-  adjust <- TRUE
-
   week <- (365.25/12)/7
   rxrate <- log(2)/(rxrate*week)
   lamcens <- rxrate*censor.prop / (1-censor.prop)
