@@ -69,17 +69,18 @@ move progression events forward to the next scheduled visit (and censored events
 provided.
 }
 \examples{
-# Generate enrollment schedule, with ramp-up period of 5 months, 10 subjects per month thereafter, up to a total
-# of 60 subjects with 1:1 randomization
+# Generate enrollment schedule, with ramp-up period of 5 months, 10 subjects per month thereafter,
+# up to a total of 60 subjects with 1:1 randomization
 enrol <- c(seq(2,10,length.out=5),rep(10,times=3))
 # Input visit schedule for tumor assessments in weeks
 schedule <- seq(0,100,4)
 # Set Median PFS to 10 months for Placebo, and 12 months for Sip-T
 rxrate <- c(12,10)
 # Data cut-off is set at event number 40, proportion of events that are deaths is set at 10\% and
-# censoring rate is 10\%.  Accept default method of moving progression events forward to next scheduled visit.
+# censoring rate is 10\%.  Accept default method of moving progression events forward to next
+# scheduled visit.
 # Number of trial simulations = 1000.
 nevent <- 40
-sim <- trial_sim(schedule, enrol, rxrate, nevent, adjust=TRUE, trt=c("Sip-T","Placebo"),death.prop=0.1,
-censor.prop=0.1,n.rep=1000)
+sim <- trial_sim(schedule, enrol, rxrate, nevent, adjust=TRUE, trt=c("Sip-T","Placebo"),
+death.prop=0.1, censor.prop=0.1, n.rep=1000)
 }

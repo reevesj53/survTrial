@@ -19,6 +19,12 @@
 #' Extracts median and prediction interval by treatment group across all repeated simulations for median survival.
 #'
 #' @examples
+#' # Generate some trial simulation data
+#' enrol <- c(seq(2,10,length.out=5),rep(10,times=3))
+#' schedule <- seq(0,100,4)
+#' sim <- trial_sim(schedule, enrol, c(12,10), 40, adjust=TRUE, trt=c("Sip-T","Placebo"),
+#' death.prop=0.1, censor.prop=0.1, n.rep=1000)
+#' # Extract Kaplan-Meier results on simulated data
 #' sim.km <- calc_km(sim)
 calc_km <- function(sim,ci.range=0.95){
 
@@ -30,9 +36,9 @@ calc_km <- function(sim,ci.range=0.95){
     sim.grouped %>%
     # Fit each nested data to KM
     dplyr::mutate(kmfit =
-                    purrr::map(data, function(x) survival::survfit(Surv(eventt, status)~1, data=x))) %>%
+                    purrr::map(data, function(x) survival::survfit(survival::Surv(eventt, status)~1, data=x))) %>%
     dplyr::mutate(median = purrr::map_dbl(kmfit, function(x) broom::glance(x)$median)) %>%
-    dplyr::arrange(rep,rx) %>% select(-data,-kmfit)
+    dplyr::arrange(rep,rx) %>% dplyr::select(-data,-kmfit)
 
   ## Calc quantiles for median survival time
 

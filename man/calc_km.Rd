@@ -32,5 +32,11 @@ Generate statistics from simulation runs on Kaplan-Meier medians
 Extracts median and prediction interval by treatment group across all repeated simulations for median survival.
 }
 \examples{
+# Generate some trial simulation data
+enrol <- c(seq(2,10,length.out=5),rep(10,times=3))
+schedule <- seq(0,100,4)
+sim <- trial_sim(schedule, enrol, c(12,10), 40, adjust=TRUE, trt=c("Sip-T","Placebo"),
+death.prop=0.1, censor.prop=0.1, n.rep=1000)
+# Extract Kaplan-Meier results on simulated data
 sim.km <- calc_km(sim)
 }

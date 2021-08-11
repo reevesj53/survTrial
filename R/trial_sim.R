@@ -40,19 +40,20 @@
 #' provided.
 #'
 #' @examples
-#' # Generate enrollment schedule, with ramp-up period of 5 months, 10 subjects per month thereafter, up to a total
-#' # of 60 subjects with 1:1 randomization
+#' # Generate enrollment schedule, with ramp-up period of 5 months, 10 subjects per month thereafter,
+#' # up to a total of 60 subjects with 1:1 randomization
 #' enrol <- c(seq(2,10,length.out=5),rep(10,times=3))
 #' # Input visit schedule for tumor assessments in weeks
 #' schedule <- seq(0,100,4)
 #' # Set Median PFS to 10 months for Placebo, and 12 months for Sip-T
 #' rxrate <- c(12,10)
 #' # Data cut-off is set at event number 40, proportion of events that are deaths is set at 10% and
-#' # censoring rate is 10%.  Accept default method of moving progression events forward to next scheduled visit.
+#' # censoring rate is 10%.  Accept default method of moving progression events forward to next
+#' # scheduled visit.
 #' # Number of trial simulations = 1000.
 #' nevent <- 40
-#' sim <- trial_sim(schedule, enrol, rxrate, nevent, adjust=TRUE, trt=c("Sip-T","Placebo"),death.prop=0.1,
-#' censor.prop=0.1,n.rep=1000)
+#' sim <- trial_sim(schedule, enrol, rxrate, nevent, adjust=TRUE, trt=c("Sip-T","Placebo"),
+#' death.prop=0.1, censor.prop=0.1, n.rep=1000)
 
 trial_sim <- function(schedule, enrol, rxrate, nevent, adjust=TRUE, trt=c("treatment","placebo"), death.prop=0.1,
                       censor.prop=0.1, n.rep = 1000){
@@ -90,8 +91,8 @@ trial_sim <- function(schedule, enrol, rxrate, nevent, adjust=TRUE, trt=c("treat
     sim <- tibble::tibble(pfst,status,rx=trt[2-rx])
     sim <- sim %>% dplyr::mutate(rep=rep(1:n.rep,each=nsub),subjid=rep(1:nsub,times=n.rep),
                           death=stats::rbinom(tot,1,death.prop),
-                          status=if_else(pfst>max(schedule) & death==0,0,status),
-                          eventt=case_when(!adjust ~ pfst,
+                          status=dplyr::if_else(pfst>max(schedule) & death==0,0,status),
+                          eventt=dplyr::case_when(!adjust ~ pfst,
                                            pfst<max(schedule) ~
                           status*death*pfst + status*(1-death)*forward(pfst,schedule)
                            + (1-status)*backward(pfst,schedule),
@@ -100,14 +101,14 @@ trial_sim <- function(schedule, enrol, rxrate, nevent, adjust=TRUE, trt=c("treat
                           totalt=enrol+eventt)
 
     cutoff <- sim %>% dplyr::group_by(rep) %>% dplyr::select(rep, subjid, status, totalt)
-    cut1 <- cutoff %>% summarize(totalmax=max(totalt))
+    cut1 <- cutoff %>% dplyr::summarize(totalmax=max(totalt))
     cutoff <- cutoff %>% dplyr::filter(status==1) %>% dplyr::arrange(rep,totalt) %>%
       dplyr::summarize(cut=dplyr::nth(totalt,nevent)) %>% dplyr::inner_join(cut1,by="rep") %>%
-      dplyr::mutate(cut=coalesce(cut,totalmax)) %>% dplyr::select(-totalmax)
+      dplyr::mutate(cut=dplyr::coalesce(cut,totalmax)) %>% dplyr::select(-totalmax)
 
     sim <- sim %>% dplyr::inner_join(cutoff,by="rep") %>% dplyr::arrange(rep,totalt) %>% dplyr::filter(enrol<=cut) %>%
-      dplyr::mutate(diff=pmax(totalt-cut,0),status = if_else(diff>0,0,status),
-             pfst=if_else(diff>0,pfst-diff,pfst), totalt=if_else(totalt>cut,cut,totalt)) %>%
+      dplyr::mutate(diff=pmax(totalt-cut,0),status = dplyr::if_else(diff>0,0,status),
+             pfst=dplyr::if_else(diff>0,pfst-diff,pfst), totalt=dplyr::if_else(totalt>cut,cut,totalt)) %>%
        dplyr::select(rep,rx,subjid,pfst:totalt)
     out <- list()
     out$sim <- sim
