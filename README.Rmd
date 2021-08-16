@@ -15,22 +15,31 @@ knitr::opts_chunk$set(
 
 # survTrial
 
-<!-- badges: start -->
-<!-- badges: end -->
+The goal of survTrial is to document simulation methods used within Bayer Medical Statistics Oncology.  The current version of the package runs simulation scenarios for PFS, allowing for either:
 
-The goal of survTrial is to ...
+* event times (progression and death) simulated from exponential distribution.
+* death times simulated from exponential distribution, but progression times are moved forward to next   
+  scheduled time and censored times are moved back to previous visit after random generation from   
+  exponential.
+Summary statistics for Kaplan-Meier medians and associated simulation graphs can be displayed for two treatment groups.  Similarly, simulation results for hazard ratio over all iterations of the trial design can be extracted.
 
 ## Installation
 
-You can install the released version of survTrial from [GitHub](https://github.com/) with:
+You can install the latest version of survTrial from [GitHub](https://github.com/) with:
 
-``` r
+``` {r, eval = FALSE}
 # install.packages("devtools")
 devtools::install_github("reevesj53/survTrial")
 ```
 ## Example
 
 This is a basic example which shows you how to solve a common problem:
+
+First, run survreg to fit parametric survival model:
+
+```{r echo=FALSE}
+devtools::load_all()
+```
 
 Next, run simulation:
 
@@ -39,6 +48,20 @@ enrol <- c(seq(2,10,length.out=5),rep(10,times=3))
 schedule <- seq(0,100,4)
 rxrate <- c(12,10)
 nevent <- 40
-
+sim <- trial_sim(schedule, enrol, rxrate, nevent, adjust=TRUE, trt=c("Sip-T","placebo"),death.prop=0.1,
+censor.prop=0.1,n.rep=1000)
 ```
+Calculate survival curves with prediction intervals:
 
+```{r calc_km}
+sim.km <- calc_km(sim)
+sim.km
+```
+Next plot results
+```{r plot1}
+plot_sim(sim.km)
+```
+Or add confidence bounds and summary table to plot.
+```{r plot2}
+plot_sim(sim.km, ci=TRUE, summary=TRUE)
+```
