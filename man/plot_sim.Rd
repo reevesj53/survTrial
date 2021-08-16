@@ -6,7 +6,7 @@
 \alias{plot_sim.trialsim.hr}
 \title{Generic graph function}
 \usage{
-plot_sim(sim, ...)
+plot_sim(sim, ci, summary)
 
 \method{plot_sim}{trialsim.km}(sim, ci = FALSE, summary = FALSE)
 
@@ -14,8 +14,6 @@ plot_sim(sim, ...)
 }
 \arguments{
 \item{sim}{An object from \code{\link[=calc_km]{calc_km()}} or \code{\link[=calc_hr]{calc_hr()}}}
-
-\item{...}{Other arguments passed on to methods}
 
 \item{ci}{A logical specifying whether confidence bounds are shown on the histogram plot (default=FALSE)}
 

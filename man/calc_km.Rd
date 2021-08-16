@@ -38,5 +38,5 @@ schedule <- seq(0,100,4)
 sim <- trial_sim(schedule, enrol, c(12,10), 40, adjust=TRUE, trt=c("Sip-T","Placebo"),
 death.prop=0.1, censor.prop=0.1, n.rep=1000)
 # Extract Kaplan-Meier results on simulated data
-sim.km <- calc_km(sim)
+\donttest{sim.km <- calc_km(sim)}
 }

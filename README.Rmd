@@ -21,6 +21,7 @@ The goal of survTrial is to document simulation methods used within Bayer Medica
 * death times simulated from exponential distribution, but progression times are moved forward to next   
   scheduled time and censored times are moved back to previous visit after random generation from   
   exponential.
+  
 Summary statistics for Kaplan-Meier medians and associated simulation graphs can be displayed for two treatment groups.  Similarly, simulation results for hazard ratio over all iterations of the trial design can be extracted.
 
 ## Installation
@@ -32,26 +33,28 @@ You can install the latest version of survTrial from [GitHub](https://github.com
 devtools::install_github("reevesj53/survTrial")
 ```
 ## Example
-
-This is a basic example which shows you how to solve a common problem:
-
-First, run survreg to fit parametric survival model:
-
-```{r echo=FALSE}
-devtools::load_all()
+```{r}
+library(survTrial)
 ```
+The code below shows examples of output from the simulations.
 
-Next, run simulation:
+First, generate an example enrollment schedule, with ramp-up period of 5 months, 10 subjects per month thereafter leading to a total of 60 subjects with 1:1 randomization.
 
-```{r sim}
+The visit schedule for tumor assessments is every 4 weeks.  Median PFS for the two treatment groups (Sip-T and Placebo) are 12 and 10 months respectively.
+
+Data cut-off will occur at the 40th event.
+```{r example}
 enrol <- c(seq(2,10,length.out=5),rep(10,times=3))
 schedule <- seq(0,100,4)
 rxrate <- c(12,10)
 nevent <- 40
+
+```
+Then run the simulation:
+```{r sim}
 sim <- trial_sim(schedule, enrol, rxrate, nevent, adjust=TRUE, trt=c("Sip-T","placebo"),death.prop=0.1,
 censor.prop=0.1,n.rep=1000)
 ```
-Calculate survival curves with prediction intervals:
 
 ```{r calc_km}
 sim.km <- calc_km(sim)

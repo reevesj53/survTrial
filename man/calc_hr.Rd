@@ -36,5 +36,5 @@ schedule <- seq(0,100,4)
 sim <- trial_sim(schedule, enrol, c(12,10), 40, adjust=TRUE, trt=c("Sip-T","Placebo"),
 death.prop=0.1, censor.prop=0.1, n.rep=1000)
 # Extract hazard ratios from simulated data
-sim.hr <- calc_hr(sim)
+\donttest{sim.hr <- calc_hr(sim)}
 }

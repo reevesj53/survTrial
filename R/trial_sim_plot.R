@@ -2,11 +2,11 @@
 #'
 #' Plots simulation results for both Kaplan-Meier medians by treatment group, and hazard ratios generated
 #' from simulated trials.
+#' @export
 #' @param sim An object from [calc_km()] or [calc_hr()]
-#' @param ... Other arguments passed on to methods
 #' @param ci A logical specifying whether confidence bounds are shown on the histogram plot (default=FALSE)
 #' @param summary A logical specifying whether a summary table is presented on the graph (default=FALSE)
-plot_sim <- function(sim, ...) UseMethod("plot_sim")
+plot_sim <- function(sim, ci, summary) UseMethod("plot_sim")
 
 #' @export
 #' @describeIn plot_sim Simulation results presented for Kaplan-Meier medians
