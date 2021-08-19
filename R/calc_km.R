@@ -27,7 +27,7 @@
 #' # Extract Kaplan-Meier results on simulated data
 #' \donttest{sim.km <- calc_km(sim)}
 calc_km <- function(sim,ci.range=0.95){
-
+  if(!(any(names(sim$sim)=="eventt"))) sim$sim <- sim$sim %>% dplyr::mutate(eventt=pfst)
   sim.grouped <-
     sim$sim %>%
     dplyr::group_by(rep, rx) %>% tidyr::nest()
@@ -38,7 +38,7 @@ calc_km <- function(sim,ci.range=0.95){
     dplyr::mutate(kmfit =
                     purrr::map(data, function(x) survival::survfit(survival::Surv(eventt, status)~1, data=x))) %>%
     dplyr::mutate(median = purrr::map_dbl(kmfit, function(x) broom::glance(x)$median)) %>%
-    dplyr::arrange(rep,rx) %>% dplyr::select(-data,-kmfit)
+    dplyr::arrange(rep,rx) %>% dplyr::select(!c(data,kmfit))
 
   ## Calc quantiles for median survival time
 
@@ -48,9 +48,9 @@ calc_km <- function(sim,ci.range=0.95){
 
   sim.median.quantile <- sim.km %>%
     dplyr::group_by(rx) %>%
-    dplyr::summarize(sim_low = as.numeric(stats::quantile(median, probs = 0.5 - ci.range/2, na.rm = TRUE)),
-                   sim_median = as.numeric(stats::quantile(median, probs = 0.5, na.rm = TRUE)),
-                   sim_high= as.numeric(stats::quantile(median, probs = 0.5 + ci.range/2, na.rm = TRUE))) %>%
+    dplyr::summarize(sim_low = stats::quantile(median, probs = 0.5 - ci.range/2, na.rm = TRUE),
+                   sim_median = stats::quantile(median, probs = 0.5, na.rm = TRUE),
+                   sim_high= stats::quantile(median, probs = 0.5 + ci.range/2, na.rm = TRUE)) %>%
     dplyr::ungroup() %>%
     tidyr::pivot_longer(sim_low:sim_high, names_to = "description", values_to = "KM_median") %>%
     dplyr::inner_join(quantiles,by="description")

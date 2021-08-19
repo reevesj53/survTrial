@@ -32,35 +32,39 @@ devtools::install_github("reevesj53/survTrial")
 
 ## Example
 
-``` r
-library(survTrial)
-```
-
 The code below shows examples of output from the simulations.
 
-First, generate an example enrollment schedule, with ramp-up period of 5
-months, 10 subjects per month thereafter leading to a total of 60
-subjects with 1:1 randomization.
+First, generate an example enrollment schedule in `enrol`, with ramp-up
+period of 5 months, 10 subjects per month thereafter leading to a total
+of 60 subjects with 1:1 randomization.
 
-The visit schedule for tumor assessments is every 4 weeks. Median PFS
-for the two treatment groups (Sip-T and Placebo) are 12 and 10 months
-respectively.
+The visit schedule for tumor assessments is every 4 weeks (in
+`schedule`). Median PFS for the two treatment groups (Sip-T and Placebo)
+are 12 and 10 months respectively.
 
 Data cut-off will occur at the 40th event.
 
 ``` r
+library(survTrial)
+
 enrol <- c(seq(2,10,length.out=5),rep(10,times=3))
 schedule <- seq(0,100,4)
 rxrate <- c(12,10)
 nevent <- 40
 ```
 
-Then run the simulation:
+The proportion of events that are deaths is set at 10% and censoring
+rate is 10%. We accept the default method of moving progression events
+forward to the next scheduled visit. Then run the simulation:
 
 ``` r
 sim <- trial_sim(schedule, enrol, rxrate, nevent, adjust=TRUE, trt=c("Sip-T","placebo"),death.prop=0.1,
 censor.prop=0.1,n.rep=1000)
 ```
+
+The function `sim.km()` extracts both the simulated values for KM median
+by iteration and treatment group, and associated summary statistics by
+treatment group. This information is shown below.
 
 ``` r
 sim.km <- calc_km(sim)
@@ -69,23 +73,23 @@ sim.km
 #> # A tibble: 2,000 x 3
 #>      rep rx      median
 #>    <int> <chr>    <dbl>
-#>  1     1 placebo   44  
-#>  2     1 Sip-T     40.0
-#>  3     2 placebo   48  
-#>  4     2 Sip-T     44  
-#>  5     3 placebo   40  
-#>  6     3 Sip-T     78  
-#>  7     4 placebo   60  
-#>  8     4 Sip-T     57.0
-#>  9     5 placebo   48  
-#> 10     5 Sip-T     46.4
+#>  1     1 placebo     56
+#>  2     1 Sip-T       68
+#>  3     2 placebo     44
+#>  4     2 Sip-T       52
+#>  5     3 placebo     40
+#>  6     3 Sip-T       56
+#>  7     4 placebo     44
+#>  8     4 Sip-T       48
+#>  9     5 placebo     24
+#> 10     5 Sip-T       56
 #> # ... with 1,990 more rows
 #> 
 #> $median.quantile
 #> # A tibble: 6 x 4
 #>   rx      description KM_median quantile
 #>   <chr>   <chr>           <dbl>    <dbl>
-#> 1 placebo sim_low            28   0.0250
+#> 1 placebo sim_low            24   0.0250
 #> 2 placebo sim_median         44   0.5   
 #> 3 placebo sim_high           72   0.975 
 #> 4 Sip-T   sim_low            32   0.0250
@@ -96,17 +100,38 @@ sim.km
 #> [1] "trialsim.km"
 ```
 
-Next plot results
+A histogram plot of the simulated values for KM median can be obtained
+by calling `plot_sim()` for `sim.km` object.
 
 ``` r
 plot_sim(sim.km)
 ```
 
-<img src="man/figures/README-plot1-1.png" width="100%" /> Or add
-confidence bounds and summary table to plot.
+<img src="man/figures/README-plot1-1.png" width="100%" /> Additional
+options are available:
+
+-   add confidence bounds as specified in `calc_km()` (defaults to 95%)
+    to the plot.
+-   add a table of summary statistics by treatment group.
 
 ``` r
 plot_sim(sim.km, ci=TRUE, summary=TRUE)
 ```
 
-<img src="man/figures/README-plot2-1.png" width="100%" />
+<img src="man/figures/README-plot2-1.png" width="100%" /> Simulation
+results are also available for Hazard Ratio for each simulated trial by
+running the code below.
+
+``` r
+sim.hr <- calc_hr(sim)
+```
+
+And a similar graph of the simulation results for Hazard Ratio with
+associated summary table is obtained from the generic plotting function
+`plot_sim()`, as shown in the following:
+
+``` r
+plot_sim(sim.hr, ci=TRUE, summary=TRUE)
+```
+
+<img src="man/figures/README-plot3-1.png" width="100%" />

@@ -17,7 +17,7 @@ trial_sim(
 )
 }
 \arguments{
-\item{schedule}{A required vector describing the visit schedule in weeks.  Simulated progression times occurring
+\item{schedule}{A required vector describing the visit schedule in weeks.  Simulated events occurring
 after the last scheduled visit are censored.}
 
 \item{enrol}{A required vector that displays the number of subjects projected to be enrolled each
@@ -49,15 +49,12 @@ following columns:
 \item \strong{pfst}: Simulated PFS time (weeks)
 \item \strong{status}: Event status, 0=censored, 1=event
 \item \strong{death}: Death status, 0=alive, 1=dead
-\item \strong{eventt}: Simulated event time in weeks (equal to \strong{pfst} if \code{adjust=FALSE})
+\item \strong{eventt}: Simulated adjusted PFS Time (weeks) (output if \code{adjust=TRUE})
 \item \strong{enrol}: Enrollment time (weeks)
-\item \strong{totalt}: Total time: enrollment time plus event time (weeks)
+\item \strong{totalt}: Total time: enrollment time plus PFS time (weeks)
 }
-And a data frame containing the time in months of the data-cut for each simulation based on the \code{nevent} parameter:
-\itemize{\item \strong{rep}: ID for simulation runs.
-\item \strong{cut}: Time (weeks) of data cut-off.  If target number of events is not reached, then cut-off
-is set at last censored time.
-}
+And a data frame containing the subject with the event that represents the data cut-off based on
+the \code{nevent} parameter (for all simulations).
 }
 \description{
 The main function to generate two-arm clinical trial PFS data assuming an exponential distribution.

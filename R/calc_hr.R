@@ -25,9 +25,9 @@
 #' # Extract hazard ratios from simulated data
 #' \donttest{sim.hr <- calc_hr(sim)}
 calc_hr <- function(sim,ci.range=0.95){
+  if(!(any(names(sim$sim)=="eventt"))) sim$sim <- sim$sim %>% dplyr::mutate(eventt=pfst)
   sim.nested <-
-    sim$sim %>%
-    dplyr::group_by(rep) %>% tidyr::nest()
+    sim$sim %>% dplyr::group_by(rep) %>% tidyr::nest()
 
   calc_hr_each_sim <- function(x){
     cfit <- survival::coxph(survival::Surv(eventt, status)~rx, data=x) %>%
@@ -46,9 +46,9 @@ calc_hr <- function(sim,ci.range=0.95){
 
   sim.hr.quantile <-
     sim.hr %>%
-    dplyr::summarize(sim_low = as.numeric(stats::quantile(HR, probs = 0.5 - ci.range/2, na.rm = TRUE)),
-                     sim_median = as.numeric(stats::quantile(HR, probs = 0.5, na.rm = TRUE)),
-                     sim_high= as.numeric(stats::quantile(HR, probs = 0.5 + ci.range/2, na.rm = TRUE))) %>%
+    dplyr::summarize(sim_low = stats::quantile(HR, probs = 0.5 - ci.range/2, na.rm = TRUE),
+                     sim_median = stats::quantile(HR, probs = 0.5, na.rm = TRUE),
+                     sim_high= stats::quantile(HR, probs = 0.5 + ci.range/2, na.rm = TRUE)) %>%
     tidyr::pivot_longer(sim_low:sim_high, names_to = "description", values_to = "HR") %>%
     dplyr::inner_join(quantiles,by="description")
   # Output

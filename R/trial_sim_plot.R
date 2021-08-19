@@ -1,6 +1,6 @@
 #' Generic graph function
 #'
-#' Plots simulation results for both Kaplan-Meier medians by treatment group, and hazard ratios generated
+#' Plots simulation results for either Kaplan-Meier medians by treatment group, or hazard ratios generated
 #' from simulated trials.
 #' @export
 #' @param sim An object from [calc_km()] or [calc_hr()]
