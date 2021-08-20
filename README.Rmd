@@ -15,6 +15,10 @@ knitr::opts_chunk$set(
 
 # survTrial
 
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/reevesj53/survTrial/workflows/R-CMD-check/badge.svg)](https://github.com/reevesj53/survTrial/actions)
+<!-- badges: end -->
+
 The goal of survTrial is to document simulation methods used within Bayer Medical Statistics Oncology.  The current version of the package runs simulation scenarios for PFS, allowing for either:
 
 * event times (progression and death) simulated from exponential distribution.

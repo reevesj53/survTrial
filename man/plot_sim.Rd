@@ -20,7 +20,7 @@ plot_sim(sim, ci, summary)
 \item{summary}{A logical specifying whether a summary table is presented on the graph (default=FALSE)}
 }
 \description{
-Plots simulation results for both Kaplan-Meier medians by treatment group, and hazard ratios generated
+Plots simulation results for either Kaplan-Meier medians by treatment group, or hazard ratios generated
 from simulated trials.
 }
 \section{Methods (by class)}{

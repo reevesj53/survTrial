@@ -3,6 +3,11 @@
 
 # survTrial
 
+<!-- badges: start -->
+
+[![R-CMD-check](https://github.com/reevesj53/survTrial/workflows/R-CMD-check/badge.svg)](https://github.com/reevesj53/survTrial/actions)
+<!-- badges: end -->
+
 The goal of survTrial is to document simulation methods used within
 Bayer Medical Statistics Oncology. The current version of the package
 runs simulation scenarios for PFS, allowing for either:
@@ -60,6 +65,7 @@ forward to the next scheduled visit. Then run the simulation:
 ``` r
 sim <- trial_sim(schedule, enrol, rxrate, nevent, adjust=TRUE, trt=c("Sip-T","placebo"),death.prop=0.1,
 censor.prop=0.1,n.rep=1000)
+#> Joining, by = "rep"
 ```
 
 The function `sim.km()` extracts both the simulated values for KM median
@@ -73,28 +79,28 @@ sim.km
 #> # A tibble: 2,000 x 3
 #>      rep rx      median
 #>    <int> <chr>    <dbl>
-#>  1     1 placebo     56
-#>  2     1 Sip-T       68
-#>  3     2 placebo     44
-#>  4     2 Sip-T       52
-#>  5     3 placebo     40
-#>  6     3 Sip-T       56
-#>  7     4 placebo     44
-#>  8     4 Sip-T       48
-#>  9     5 placebo     24
-#> 10     5 Sip-T       56
+#>  1     1 placebo   51.4
+#>  2     1 Sip-T     76  
+#>  3     2 placebo   32  
+#>  4     2 Sip-T     24  
+#>  5     3 placebo   28  
+#>  6     3 Sip-T     60  
+#>  7     4 placebo   60  
+#>  8     4 Sip-T     52  
+#>  9     5 placebo   48  
+#> 10     5 Sip-T     72  
 #> # ... with 1,990 more rows
 #> 
 #> $median.quantile
 #> # A tibble: 6 x 4
 #>   rx      description KM_median quantile
 #>   <chr>   <chr>           <dbl>    <dbl>
-#> 1 placebo sim_low            24   0.0250
-#> 2 placebo sim_median         44   0.5   
-#> 3 placebo sim_high           72   0.975 
-#> 4 Sip-T   sim_low            32   0.0250
-#> 5 Sip-T   sim_median         52   0.5   
-#> 6 Sip-T   sim_high           84   0.975 
+#> 1 placebo sim_low          27.9   0.0250
+#> 2 placebo sim_median       44     0.5   
+#> 3 placebo sim_high         72     0.975 
+#> 4 Sip-T   sim_low          32     0.0250
+#> 5 Sip-T   sim_median       54.4   0.5   
+#> 6 Sip-T   sim_high         84     0.975 
 #> 
 #> attr(,"class")
 #> [1] "trialsim.km"

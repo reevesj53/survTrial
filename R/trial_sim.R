@@ -100,7 +100,8 @@ trial_sim <- function(schedule, enrol, rxrate, nevent, adjust=TRUE, trt=c("treat
 
     sim <- sim %>% dplyr::left_join(cut1) %>% dplyr::filter(is.na(totalmax) | enrol<=totalmax) %>%
       dplyr::mutate(diff=dplyr::if_else(is.na(totalmax),0,pmax(totalt-totalmax,0)),status = dplyr::if_else(diff>0,0,status),
-                    across(c(pfst,totalt),~.x-diff)) %>% dplyr::relocate(rep,rx,subjid) %>% dplyr::select(!c(totalmax,diff))
+                    dplyr::across(c(pfst,totalt),~.x-diff)) %>% dplyr::relocate(rep,rx,subjid) %>%
+                    dplyr::select(!c(totalmax,diff))
     if (adjust) {
       sim <- sim %>% dplyr::mutate(eventt=status*death*pfst + status*(1-death)*forward(pfst,schedule)
                             + (1-status)*backward(pfst,schedule),totalt=enrol+eventt)
