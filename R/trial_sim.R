@@ -1,4 +1,4 @@
-#' Simulation of trial data for Sip-T project
+#' Simulation of trial data
 #'
 #' The main function to generate two-arm clinical trial PFS data assuming an exponential distribution.
 #' @export
