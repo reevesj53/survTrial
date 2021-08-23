@@ -43,7 +43,7 @@
 #' enrol <- c(seq(2,10,length.out=5),rep(10,times=3))
 #' # Input visit schedule for tumor assessments in weeks
 #' schedule <- seq(0,100,4)
-#' # Set Median PFS to 10 months for Placebo, and 12 months for Sip-T
+#' # Set Median PFS to 10 months for Placebo, and 12 months for treatment
 #' rxrate <- c(12,10)
 #' # Data cut-off is set at event number 40, proportion of events that are deaths is set at 10% and
 #' # censoring rate is 10%.  Accept default method of moving progression events forward to next
