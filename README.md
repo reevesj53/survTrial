@@ -8,9 +8,9 @@
 [![R-CMD-check](https://github.com/reevesj53/survTrial/workflows/R-CMD-check/badge.svg)](https://github.com/reevesj53/survTrial/actions)
 <!-- badges: end -->
 
-The goal of survTrial is to document simulation methods used within
-Bayer Medical Statistics Oncology. The current version of the package
-runs simulation scenarios for PFS, allowing for either:
+The goal of survTrial is to document common simulation methods used
+within biostatistics. The current version of the package runs simulation
+scenarios for PFS, allowing for either:
 
 -   event times (progression and death) simulated from exponential
     distribution.
@@ -44,8 +44,8 @@ period of 5 months, 10 subjects per month thereafter leading to a total
 of 60 subjects with 1:1 randomization.
 
 The visit schedule for tumor assessments is every 4 weeks (in
-`schedule`). Median PFS for the two treatment groups (Sip-T and Placebo)
-are 12 and 10 months respectively.
+`schedule`). Median PFS for the two treatment groups (Treatment and
+Placebo) are 12 and 10 months respectively.
 
 Data cut-off will occur at the 40th event.
 
@@ -63,7 +63,7 @@ rate is 10%. We accept the default method of moving progression events
 forward to the next scheduled visit. Then run the simulation:
 
 ``` r
-sim <- trial_sim(schedule, enrol, rxrate, nevent, adjust=TRUE, trt=c("Sip-T","placebo"),death.prop=0.1,
+sim <- trial_sim(schedule, enrol, rxrate, nevent, adjust=TRUE, trt=c("treatment","placebo"),death.prop=0.1,
 censor.prop=0.1,n.rep=1000)
 #> Joining, by = "rep"
 ```
@@ -77,30 +77,30 @@ sim.km <- calc_km(sim)
 sim.km
 #> $sim.km
 #> # A tibble: 2,000 x 3
-#>      rep rx      median
-#>    <int> <chr>    <dbl>
-#>  1     1 placebo   51.4
-#>  2     1 Sip-T     76  
-#>  3     2 placebo   32  
-#>  4     2 Sip-T     24  
-#>  5     3 placebo   28  
-#>  6     3 Sip-T     60  
-#>  7     4 placebo   60  
-#>  8     4 Sip-T     52  
-#>  9     5 placebo   48  
-#> 10     5 Sip-T     72  
+#>      rep rx        median
+#>    <int> <chr>      <dbl>
+#>  1     1 placebo     44  
+#>  2     1 treatment   36  
+#>  3     2 placebo     52  
+#>  4     2 treatment   43.4
+#>  5     3 placebo     48  
+#>  6     3 treatment   NA  
+#>  7     4 placebo     52  
+#>  8     4 treatment   56  
+#>  9     5 placebo     33.3
+#> 10     5 treatment   48  
 #> # ... with 1,990 more rows
 #> 
 #> $median.quantile
 #> # A tibble: 6 x 4
-#>   rx      description KM_median quantile
-#>   <chr>   <chr>           <dbl>    <dbl>
-#> 1 placebo sim_low          27.9   0.0250
-#> 2 placebo sim_median       44     0.5   
-#> 3 placebo sim_high         72     0.975 
-#> 4 Sip-T   sim_low          32     0.0250
-#> 5 Sip-T   sim_median       54.4   0.5   
-#> 6 Sip-T   sim_high         84     0.975 
+#>   rx        description KM_median quantile
+#>   <chr>     <chr>           <dbl>    <dbl>
+#> 1 placebo   sim_low          28     0.0250
+#> 2 placebo   sim_median       44     0.5   
+#> 3 placebo   sim_high         70.1   0.975 
+#> 4 treatment sim_low          32     0.0250
+#> 5 treatment sim_median       52     0.5   
+#> 6 treatment sim_high         84     0.975 
 #> 
 #> attr(,"class")
 #> [1] "trialsim.km"

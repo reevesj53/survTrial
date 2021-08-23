@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 [![R-CMD-check](https://github.com/reevesj53/survTrial/workflows/R-CMD-check/badge.svg)](https://github.com/reevesj53/survTrial/actions)
 <!-- badges: end -->
 
-The goal of survTrial is to document simulation methods used within Bayer Medical Statistics Oncology.  The current version of the package runs simulation scenarios for PFS, allowing for either:
+The goal of survTrial is to document common simulation methods used within biostatistics.  The current version of the package runs simulation scenarios for PFS, allowing for either:
 
 * event times (progression and death) simulated from exponential distribution.
 * death times simulated from exponential distribution, but progression times are moved forward to next   
@@ -41,7 +41,7 @@ The code below shows examples of output from the simulations.
 
 First, generate an example enrollment schedule in `enrol`, with ramp-up period of 5 months, 10 subjects per month thereafter leading to a total of 60 subjects with 1:1 randomization.
 
-The visit schedule for tumor assessments is every 4 weeks (in `schedule`).  Median PFS for the two treatment groups (Sip-T and Placebo) are 12 and 10 months respectively.
+The visit schedule for tumor assessments is every 4 weeks (in `schedule`).  Median PFS for the two treatment groups (Treatment and Placebo) are 12 and 10 months respectively.
 
 Data cut-off will occur at the 40th event.  
 ```{r example}
@@ -55,7 +55,7 @@ nevent <- 40
 ```
 The proportion of events that are deaths is set at 10% and censoring rate is 10%.  We accept the default method of moving progression events forward to the next scheduled visit.  Then run the simulation:
 ```{r sim}
-sim <- trial_sim(schedule, enrol, rxrate, nevent, adjust=TRUE, trt=c("Sip-T","placebo"),death.prop=0.1,
+sim <- trial_sim(schedule, enrol, rxrate, nevent, adjust=TRUE, trt=c("treatment","placebo"),death.prop=0.1,
 censor.prop=0.1,n.rep=1000)
 ```
 The function `sim.km()` extracts both the simulated values for KM median by iteration and treatment group, and associated summary statistics by treatment group.  This information is shown below.

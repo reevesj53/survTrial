@@ -78,6 +78,6 @@ rxrate <- c(12,10)
 # scheduled visit.
 # Number of trial simulations = 1000.
 nevent <- 40
-sim <- trial_sim(schedule, enrol, rxrate, nevent, adjust=TRUE, trt=c("Sip-T","Placebo"),
+sim <- trial_sim(schedule, enrol, rxrate, nevent, adjust=TRUE, trt=c("Treatment","Placebo"),
 death.prop=0.1, censor.prop=0.1, n.rep=1000)
 }

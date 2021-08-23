@@ -6,7 +6,7 @@ Authors@R:
            family = "Reeves",
            role = c("aut", "cre"),
            email = "john.reeves.ext@bayer.com")
-Description: Simulated PFS times for Sip-T project.  Progression and death events are genereated
+Description: Simulated PFS times.  Progression and death events are genereated
     for 2 treatment groups.  Options include moving progression events forward to next
     scheduled visit, and censored times back to most recent visit.  Data cut-off is specified
     for the nth event.
